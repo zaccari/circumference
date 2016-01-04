@@ -5,6 +5,12 @@ module Circumference
   class Dictionary
     include Circumference::Inspectable
 
+    ATTRIBUTE    = 'ATTRIBUTE'
+    VENDOR       = 'VENDOR'
+    BEGIN_VENDOR = 'BEGIN-VENDOR'
+    END_VENDOR   = 'END-VENDOR'
+    VALUE        = 'VALUE'
+
     DEFAULT_DICTIONARIES_PATH = ::File.join(::File.dirname(__FILE__), '..', '..', 'templates')
 
     attr_reader :attributes, :vendors
@@ -64,13 +70,13 @@ module Circumference
           split_line = line.split(/\s+/)
           next if split_line == []
           case split_line.first.upcase
-          when "ATTRIBUTE"
+          when ATTRIBUTE
             current_vendor.nil? ? set_attr(split_line) : set_vendor_attr(current_vendor, split_line)
-          when "VENDOR"
+          when VENDOR
             add_vendor(split_line)
-          when "BEGIN-VENDOR"
+          when BEGIN_VENDOR
             current_vendor = set_vendor(split_line)
-          when "END-VENDOR"
+          when END_VENDOR
             current_vendor = nil
           end
         end
@@ -85,7 +91,7 @@ module Circumference
           split_line = line.split(/\s+/)
           next if split_line == []
           case split_line.first.upcase
-          when "VALUE"
+          when VALUE
             if current_vendor.nil?
               set_value(split_line)
             else
@@ -95,9 +101,9 @@ module Circumference
                 set_value(split_line)
               end
             end
-          when "BEGIN-VENDOR"
+          when BEGIN_VENDOR
             current_vendor = set_vendor(split_line)
-          when "END-VENDOR"
+          when END_VENDOR
             current_vendor = nil
           end
         end
