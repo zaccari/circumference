@@ -22,6 +22,8 @@ module Circumference
     end
 
     def read_files(path)
+      raise Circumference::DictionaryPathNotFound, path unless File.exist?(path)
+
       dict_files = File.join(path, "*")
       Dir.glob(dict_files) { |file|
         read_attributes(file)
