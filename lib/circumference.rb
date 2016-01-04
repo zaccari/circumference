@@ -1,5 +1,5 @@
 module Circumference
-  # Your code goes here...
+
 end
 
 require 'circumference/inspectable'
