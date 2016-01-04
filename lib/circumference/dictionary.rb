@@ -1,3 +1,6 @@
+require 'circumference/dictionary/attributes'
+require 'circumference/dictionary/values'
+
 module Circumference
   class Dictionary
     include Circumference::Inspectable
