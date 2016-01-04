@@ -10,7 +10,7 @@ module Circumference
     END_VENDOR   = 'END-VENDOR'
     VALUE        = 'VALUE'
 
-    DEFAULT_DICTIONARIES_PATH = ::File.join(::File.dirname(__FILE__), '..', '..', 'templates')
+    DEFAULT_DICTIONARIES_PATH = '/usr/share/freeradius'
 
     attr_reader :attributes, :vendors
 
