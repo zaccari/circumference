@@ -35,7 +35,6 @@ module Circumference
   end
 
   class Attribute
-
     include Circumference::Inspectable
 
     attr_reader :name, :id, :type, :vendor
