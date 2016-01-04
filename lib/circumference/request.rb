@@ -62,14 +62,7 @@ module Circumference
         @packet.set_attribute(name, value)
       end
 
-      retries = options[:retries_number]
-      begin
-        send_packet
-        @received_packet = recv_packet(options[:reply_timeout])
-      rescue Exception => e
-        retry if (retries -= 1) > 0
-        raise
-      end
+      send_packet
 
       reply = { :code => @received_packet.code }
       reply.merge @received_packet.attributes
@@ -93,14 +86,7 @@ module Circumference
 
       @packet.gen_acct_authenticator(secret)
 
-      retries = options[:retries_number]
-      begin
-        send_packet
-        @received_packet = recv_packet(options[:reply_timeout])
-      rescue Exception => e
-        retry if (retries -= 1) > 0
-        raise
-      end
+      send_packet
 
       return true
     end
@@ -117,14 +103,7 @@ module Circumference
 
       @packet.gen_acct_authenticator(secret)
 
-      retries = options[:retries_number]
-      begin
-        send_packet
-        @received_packet = recv_packet(options[:reply_timeout])
-      rescue Exception => e
-        retry if (retries -= 1) > 0
-        raise
-      end
+      send_packet
 
       return true
     end
@@ -156,8 +135,16 @@ module Circumference
     private
 
     def send_packet
-      data = @packet.pack
-      @socket.send(data, 0)
+      retries = options[:retries_number]
+
+      begin
+        data = @packet.pack
+        @socket.send(data, 0)
+        @received_packet = recv_packet(options[:reply_timeout])
+      rescue Exception => e
+        retry if (retries -= 1) > 0
+        raise
+      end
     end
 
     def recv_packet(timeout)
