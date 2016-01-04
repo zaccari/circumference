@@ -11,7 +11,7 @@ module Circumference
 
     def initialize(initial_path = nil)
       @attributes = AttributesCollection.new
-      @vendors = VendorCollection.new
+      @vendors    = VendorCollection.new
 
       read_files initial_path if initial_path
     end

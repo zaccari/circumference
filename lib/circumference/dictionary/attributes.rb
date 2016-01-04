@@ -16,6 +16,7 @@ module Circumference
       else
         @collection[name] ||= Attribute.new(name, id.to_i, type)
       end
+
       @revcollection[id.to_i] ||= @collection[name]
       self << @collection[name]
     end
