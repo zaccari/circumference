@@ -7,6 +7,8 @@ module Circumference
 
     DEFAULT_DICTIONARIES_PATH = ::File.join(::File.dirname(__FILE__), '..', '..', 'templates')
 
+    attr_reader :attributes, :vendors
+
     def initialize(initial_path = nil)
       @attributes = AttributesCollection.new
       @vendors = VendorCollection.new
@@ -38,14 +40,6 @@ module Circumference
 
     def attribute_id_defined?(id)
       !@attributes.find_by_id(id).nil?
-    end
-
-    def vendors
-      @vendors
-    end
-
-    def attributes
-      @attributes
     end
 
     def name
