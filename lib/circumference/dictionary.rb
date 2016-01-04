@@ -114,7 +114,8 @@ module Circumference
     end
 
     def set_value(line)
-      @attributes.find_by_name(line[1]).add_value(line[2], line[3])
+      attribute = @attributes.find_by_name(line[1])
+      attribute.add_value(line[2], line[3]) if attribute
     end
 
     def add_vendor(line)
@@ -130,7 +131,8 @@ module Circumference
     end
 
     def set_vendor_value(vendor, line)
-      vendor.find_attribute_by_name(line[1]).add_value(line[2], line[3])
+      attribute = vendor.find_attribute_by_name(line[1])
+      attribute.add_value(line[2], line[3]) if attribute
     end
 
   end
