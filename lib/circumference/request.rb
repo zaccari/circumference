@@ -4,7 +4,27 @@ module Circumference
 
   class Request
 
-    DEFAULT_PORT = 1812
+    DEFAULT_PORT       = 1812
+    MAX_PACKET_LENGTH  = 4096 # rfc2865 max packet length
+    RADIUS             = 'RADIUS'
+
+    # Authorization
+    ACCESS_REQUEST     = 'Access-Request'
+    COA_REQUEST        = 'CoA-Request'
+    DISCONNECT_REQUEST = 'Disconnect-Request'
+    USER_NAME          = 'User-Name'
+    NAS_IDENTIFIER     = 'NAS-Identifier'
+    NAS_IP_ADDRESS     = 'NAS-IP-Address'
+    USER_PASSWORD      = 'User-Password'
+
+    # Accounting
+    ACCT_REQUEST       = 'Accounting-Request'
+    ACCT_STATUS_TYPE   = 'Acct-Status-Type'
+    ACCT_SESSION_ID    = 'Acct-Session-Id'
+    ACCT_AUTHENTIC     = 'Acct-Authentic'
+    ACCT_START         = 'Start'
+    ACCT_UPDATE        = 'Interim-Update'
+    ACCT_STOP          = 'Stop'
 
     attr_reader :options
 
@@ -32,11 +52,11 @@ module Circumference
     def authenticate(name, password, secret, user_attributes = {})
       @packet = Packet.new(options[:dictionary], Process.pid & 0xff)
       @packet.gen_auth_authenticator
-      @packet.code = 'Access-Request'
-      @packet.set_attribute('User-Name', name)
-      @packet.set_attribute('NAS-Identifier', options[:nas_identifier])
-      @packet.set_attribute('NAS-IP-Address', options[:nas_ip])
-      @packet.set_encoded_attribute('User-Password', password, secret)
+      @packet.code = ACCESS_REQUEST
+      @packet.set_attribute(USER_NAME, name)
+      @packet.set_attribute(NAS_IDENTIFIER, options[:nas_identifier])
+      @packet.set_attribute(NAS_IP_ADDRESS, options[:nas_ip])
+      @packet.set_encoded_attribute(USER_PASSWORD, password, secret)
 
       user_attributes.each_pair do |name, value|
         @packet.set_attribute(name, value)
@@ -58,14 +78,14 @@ module Circumference
     def accounting_request(status_type, name, secret, sessionid, user_attributes = {})
 
       @packet = Packet.new(options[:dictionary], Process.pid & 0xff)
-      @packet.code = 'Accounting-Request'
+      @packet.code = ACCOUNTING_REQUEST
 
-      @packet.set_attribute('User-Name', name)
-      @packet.set_attribute('NAS-Identifier', options[:nas_identifier])
-      @packet.set_attribute('NAS-IP-Address', options[:nas_ip])
-      @packet.set_attribute('Acct-Status-Type', status_type)
-      @packet.set_attribute('Acct-Session-Id', sessionid)
-      @packet.set_attribute('Acct-Authentic', 'RADIUS')
+      @packet.set_attribute(USER_NAME, name)
+      @packet.set_attribute(NAS_IDENTIFIER, options[:nas_identifier])
+      @packet.set_attribute(NAS_IP_ADDRESS, options[:nas_ip])
+      @packet.set_attribute(ACCT_STATUS_TYPE, status_type)
+      @packet.set_attribute(ACCT_SESSION_ID, sessionid)
+      @packet.set_attribute(ACCT_AUTHENTIC, RADIUS)
 
       user_attributes.each_pair do |name, value|
         @packet.set_attribute(name, value)
@@ -88,8 +108,8 @@ module Circumference
     def generic_request(code, secret, user_attributes = {})
       @packet = Packet.new(options[:dictionary], Process.pid & 0xff)
       @packet.code =  code
-      @packet.set_attribute('NAS-Identifier', options[:nas_identifier])
-      @packet.set_attribute('NAS-IP-Address', options[:nas_ip])
+      @packet.set_attribute(NAS_IDENTIFIER, options[:nas_identifier])
+      @packet.set_attribute(NAS_IP_ADDRESS, options[:nas_ip])
 
       user_attributes.each_pair do |name, value|
         @packet.set_attribute(name, value)
@@ -110,23 +130,23 @@ module Circumference
     end
 
     def coa_request(secret, user_attributes = {})
-      generic_request('CoA-Request', secret, user_attributes)
+      generic_request(COA_REQUEST, secret, user_attributes)
     end
 
     def disconnect_request(secret, user_attributes = {})
-      generic_request('Disconnect-Request', secret, user_attributes)
+      generic_request(DISCONNECT_REQUEST, secret, user_attributes)
     end
 
     def accounting_start(name, secret, sessionid, options = {})
-      accounting_request('Start', name, secret, sessionid, options)
+      accounting_request(ACCT_START, name, secret, sessionid, options)
     end
 
     def accounting_update(name, secret, sessionid, options = {})
-      accounting_request('Interim-Update', name, secret, sessionid, options)
+      accounting_request(ACCT_UPDATE, name, secret, sessionid, options)
     end
 
     def accounting_stop(name, secret, sessionid, options = {})
-      accounting_request('Stop', name, secret, sessionid, options)
+      accounting_request(ACCT_STOP, name, secret, sessionid, options)
     end
 
     def inspect
@@ -144,7 +164,7 @@ module Circumference
       if select([@socket], nil, nil, timeout.to_i) == nil
         raise "Timed out waiting for response packet from server"
       end
-      data = @socket.recvfrom(4096) # rfc2865 max packet length
+      data = @socket.recvfrom(MAX_PACKET_LENGTH)
       Packet.new(options[:dictionary], Process.pid & 0xff, data[0])
     end
 
