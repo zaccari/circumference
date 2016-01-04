@@ -25,12 +25,12 @@ module Circumference
       raise Circumference::DictionaryPathNotFound, path unless File.exist?(path)
 
       dict_files = File.join(path, "*")
-      Dir.glob(dict_files) { |file|
-        read_attributes(file)
-      }
-      Dir.glob(dict_files) { |file|
-        read_values(file)
-      }
+
+      # Read attributes
+      Dir.glob(dict_files) { |file| read_attributes(file) }
+
+      # Read values
+      Dir.glob(dict_files) { |file| read_values(file) }
     end
 
     def find_attribute_by_name(name)
