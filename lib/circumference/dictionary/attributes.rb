@@ -4,7 +4,7 @@ module Circumference
 
     attr_accessor :vendor
 
-    def initialize vendor=nil
+    def initialize(vendor = nil)
       @collection = {}
       @revcollection = {}
       @vendor = vendor if vendor
@@ -39,11 +39,11 @@ module Circumference
 
     attr_reader :name, :id, :type, :vendor
 
-    def initialize(name, id, type, vendor=nil)
+    def initialize(name, id, type, vendor = nil)
       @values = ValuesCollection.new
-      @name = name
-      @id = id.to_i
-      @type = type
+      @name   = name
+      @id     = id.to_i
+      @type   = type
       @vendor = vendor if vendor
     end
 
