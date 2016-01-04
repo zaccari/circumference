@@ -3,7 +3,6 @@ require 'circumference/dictionary/values'
 
 module Circumference
   class Dictionary
-    include Circumference::Inspectable
 
     ATTRIBUTE    = 'ATTRIBUTE'
     VENDOR       = 'VENDOR'
@@ -46,10 +45,6 @@ module Circumference
 
     def attribute_id_defined?(id)
       !@attributes.find_by_id(id).nil?
-    end
-
-    def name
-      "Dictionary"
     end
 
     class << self
